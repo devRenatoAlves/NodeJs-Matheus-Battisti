@@ -22,7 +22,7 @@ function operation () { //MENU PADRÃO
         if (action === "Criar Conta") {
             createAccount()
         } else if (action === "Consultar Saldo") {
-
+          getAccountBalance()
         } else if (action === "Depositar") {
           deposit()
         } else if (action === "Sacar") {
@@ -92,10 +92,8 @@ function deposit() {
 
       const amount = answer["amount"]
 
-      //Add amount
-
       AddAmount(accountName,amount)
-
+      operation()
     })
     .catch((err) => console.log(err))
   })
@@ -123,7 +121,15 @@ function AddAmount (accountName, amount) {
 
   accountData.balance = parseFloat(amount) + parseFloat(accountData.balance)
  
-  fs.w
+  fs.writeFileSync(
+    `accounts/${accountName}.json` ,
+    JSON.stringify(accountData),
+    function (err) {
+      console.log(err)
+    },
+  )
+
+  console.log(chalk.green(`Foi depositado o valor de R$${amount},00 na sua conta!`))
 };  
 
 function getAccount (accountName) { //Transforma o arquivo da conta em JSON
@@ -135,3 +141,23 @@ function getAccount (accountName) { //Transforma o arquivo da conta em JSON
 
   return JSON.parse(accountJSON)
 };
+
+//Show Account Balance
+function getAccountBalance() {
+  inquirer.prompt([
+    {
+      name: 'AccountName',
+      message: 'Qual  é o nome da sua conta?'
+    }
+  ])
+  .then((answer) => {
+    const accountName = answer['AccountName']
+
+    //Verify check account exists
+
+    if(!checkAccount(accountName)) {
+      return getAccountBalance()
+    } 
+  })
+  .catch(err => console.log (err))
+}
