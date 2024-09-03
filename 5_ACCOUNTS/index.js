@@ -5,6 +5,7 @@ const inquirer = require ("inquirer");
 //modulos internos
 const fs = require ("fs");
 const { type } = require("os");
+const { get } = require("http");
 
 operation()
 
@@ -157,7 +158,14 @@ function getAccountBalance() {
 
     if(!checkAccount(accountName)) {
       return getAccountBalance()
-    } 
+    }
+
+    const accountData = getAccount(accountName)
+
+    console.log(chalk.bgBlue.black(
+      `Olá, o saldo da sua conta é de R$${accountData.balance}`
+    ))
+    operation()
   })
   .catch(err => console.log (err))
 }
